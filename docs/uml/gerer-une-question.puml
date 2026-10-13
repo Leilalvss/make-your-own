@@ -1,0 +1,103 @@
+@startuml CodeLearnWay_GererUneQuestion
+title Sequence Diagram - Gérer une question
+
+actor "Administrateur / Formateur" as Admin
+participant Frontend
+participant QuestionController
+participant QuestionService
+participant QuestionRepository
+participant AnswerRepository
+database Database
+
+Admin -> Frontend : manageQuestions()
+Frontend -> QuestionController : GET /questions
+QuestionController -> QuestionService : getAllQuestions()
+QuestionService -> QuestionRepository : findAll()
+QuestionRepository -> Database : SELECT * FROM Question
+Database --> QuestionRepository : List<Question>
+QuestionRepository --> QuestionService : List<Question>
+QuestionService --> QuestionController : List<Question>
+QuestionController --> Frontend : 200 OK + List<Question>
+Frontend --> Admin : displayQuestions()
+
+alt Créer une question
+    Admin -> Frontend : submitQuestion(question, answers)
+    Frontend -> QuestionController : POST /questions
+    QuestionController -> QuestionService : createQuestion(question, answers)
+    QuestionService -> QuestionService : validateQuestion(question, answers)
+
+    QuestionService -> QuestionRepository : create(question)
+    QuestionRepository -> Database : INSERT Question
+    Database --> QuestionRepository : Question créée
+    QuestionRepository --> QuestionService : Question
+
+    QuestionService -> AnswerRepository : createAll(questionId, answers)
+    AnswerRepository -> Database : INSERT Answers
+    Database --> AnswerRepository : Answers créées
+    AnswerRepository --> QuestionService : List<Answer>
+
+    QuestionService --> QuestionController : Question créée
+    QuestionController --> Frontend : 201 Created
+    Frontend --> Admin : displaySuccessMessage()
+
+else Modifier une question
+    Admin -> Frontend : updateQuestion(questionId, data)
+    Frontend -> QuestionController : PUT /questions/{id}
+    QuestionController -> QuestionService : updateQuestion(questionId, data)
+    QuestionService -> QuestionRepository : findById(questionId)
+    QuestionRepository -> Database : Find question
+    Database --> QuestionRepository : Question / null
+    QuestionRepository --> QuestionService : Question / null
+
+    alt Question trouvée
+        QuestionService -> QuestionService : validateQuestion(data)
+        QuestionService -> QuestionRepository : update(questionId, data)
+        QuestionRepository -> Database : UPDATE Question
+        Database --> QuestionRepository : Question mise à jour
+        QuestionRepository --> QuestionService : Question
+
+        QuestionService -> AnswerRepository : updateAnswers(questionId, answers)
+        AnswerRepository -> Database : UPDATE Answers
+        Database --> AnswerRepository : Answers mises à jour
+        AnswerRepository --> QuestionService : List<Answer>
+
+        QuestionService --> QuestionController : Question modifiée
+        QuestionController --> Frontend : 200 OK
+        Frontend --> Admin : displaySuccessMessage()
+    else Question non trouvée
+        QuestionService --> QuestionController : NotFound
+        QuestionController --> Frontend : 404 Not Found
+        Frontend --> Admin : displayErrorMessage()
+    end
+
+else Supprimer une question
+    Admin -> Frontend : deleteQuestion(questionId)
+    Frontend -> QuestionController : DELETE /questions/{id}
+    QuestionController -> QuestionService : deleteQuestion(questionId)
+    QuestionService -> QuestionRepository : findById(questionId)
+    QuestionRepository -> Database : Find question
+    Database --> QuestionRepository : Question / null
+    QuestionRepository --> QuestionService : Question / null
+
+    alt Question trouvée
+        QuestionService -> AnswerRepository : deleteByQuestionId(questionId)
+        AnswerRepository -> Database : DELETE Answers
+        Database --> AnswerRepository : Suppression confirmée
+        AnswerRepository --> QuestionService : Answers supprimées
+
+        QuestionService -> QuestionRepository : delete(questionId)
+        QuestionRepository -> Database : DELETE Question
+        Database --> QuestionRepository : Suppression confirmée
+        QuestionRepository --> QuestionService : Deleted
+
+        QuestionService --> QuestionController : Suppression réussie
+        QuestionController --> Frontend : 204 No Content
+        Frontend --> Admin : displaySuccessMessage()
+    else Question non trouvée
+        QuestionService --> QuestionController : NotFound
+        QuestionController --> Frontend : 404 Not Found
+        Frontend --> Admin : displayErrorMessage()
+    end
+end
+
+@enduml

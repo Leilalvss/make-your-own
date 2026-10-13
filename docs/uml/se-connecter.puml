@@ -1,0 +1,38 @@
+@startuml CodeLearnWay_SeConnecter
+title Sequence Diagram - Se connecter
+
+actor Étudiant
+participant Frontend
+participant AuthController
+participant AuthService
+participant UserRepository
+database Database
+
+Étudiant -> Frontend : submitLogin(email, password)
+Frontend -> AuthController : POST /login
+AuthController -> AuthService : authenticate(email, password)
+
+AuthService -> UserRepository : findByEmail(email)
+UserRepository -> Database : findByEmail(email)
+Database --> UserRepository : User / null
+UserRepository --> AuthService : User / null
+
+alt Utilisateur trouvé
+    AuthService -> AuthService : verifyPassword(password)
+    alt Mot de passe correct
+        AuthService -> AuthService : generateToken(user)
+        AuthService --> AuthController : token
+        AuthController --> Frontend : 200 OK + token
+        Frontend --> Étudiant : Connexion réussie
+    else Mot de passe incorrect
+        AuthService --> AuthController : Erreur d'authentification
+        AuthController --> Frontend : 401 Unauthorized
+        Frontend --> Étudiant : Identifiants incorrects
+    end
+else Utilisateur non trouvé
+    AuthService --> AuthController : Erreur d'authentification
+    AuthController --> Frontend : 401 Unauthorized
+    Frontend --> Étudiant : Identifiants incorrects
+end
+
+@enduml

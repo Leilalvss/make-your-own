@@ -1,0 +1,34 @@
+@startuml CodeLearnWay_EnregistrerProgressionXP
+title Sequence Diagram - Enregistrer la progression et les XP
+
+participant QuestionService
+participant ProgressService
+participant QuestionProgressRepository
+participant UserRepository
+database Database
+
+QuestionService -> ProgressService : saveProgressAndXP(userId, questionId)
+
+ProgressService -> QuestionProgressRepository : findByUserAndQuestion(userId, questionId)
+QuestionProgressRepository -> Database : Find question progress
+Database --> QuestionProgressRepository : QuestionProgress / null
+QuestionProgressRepository --> ProgressService : QuestionProgress / null
+
+alt XP déjà attribuée
+    ProgressService --> QuestionService : 0 XP ajouté
+
+else Première attribution des XP
+    ProgressService -> QuestionProgressRepository : create(userId, questionId, true, 10)
+    QuestionProgressRepository -> Database : INSERT question_progress
+    Database --> QuestionProgressRepository : QuestionProgress créé
+    QuestionProgressRepository --> ProgressService : QuestionProgress
+
+    ProgressService -> UserRepository : addXP(userId, 10)
+    UserRepository -> Database : UPDATE app_user SET xp = xp + 10
+    Database --> UserRepository : XP mis à jour
+    UserRepository --> ProgressService : XP actualisé
+
+    ProgressService --> QuestionService : 10 XP ajoutés
+end
+
+@enduml

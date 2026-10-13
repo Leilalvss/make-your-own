@@ -1,0 +1,45 @@
+@startuml CodeLearnWay_ConsulterUneLecon
+title Sequence Diagram - Consulter une leçon
+
+actor Étudiant
+participant Frontend
+participant LessonController
+participant LessonService
+participant LessonRepository
+participant LessonProgressRepository
+database Database
+
+Étudiant -> Frontend : selectLesson(lessonId)
+Frontend -> LessonController : GET /lessons/{id}
+LessonController -> LessonService : getLesson(lessonId, userId)
+
+LessonService -> LessonRepository : findById(lessonId)
+LessonRepository -> Database : Find lesson
+Database --> LessonRepository : Lesson
+LessonRepository --> LessonService : Lesson
+
+alt Première leçon du parcours
+    LessonService --> LessonController : Lesson accessible
+else Leçon précédente requise
+    LessonService -> LessonRepository : findPreviousLesson(lessonId)
+    LessonRepository -> Database : Find previous lesson
+    Database --> LessonRepository : PreviousLesson
+    LessonRepository --> LessonService : PreviousLesson
+
+    LessonService -> LessonProgressRepository : isCompleted(userId, previousLessonId)
+    LessonProgressRepository -> Database : Find lesson progress
+    Database --> LessonProgressRepository : Progress / null
+    LessonProgressRepository --> LessonService : completed / not completed
+end
+
+alt Leçon accessible
+    LessonService --> LessonController : Lesson
+    LessonController --> Frontend : 200 OK + Lesson
+    Frontend --> Étudiant : displayLesson(lesson)
+else Leçon verrouillée
+    LessonService --> LessonController : AccessDenied
+    LessonController --> Frontend : 403 Forbidden
+    Frontend --> Étudiant : displayLockedMessage()
+end
+
+@enduml

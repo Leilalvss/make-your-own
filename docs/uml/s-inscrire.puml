@@ -1,0 +1,38 @@
+@startuml CodeLearnWay_S'inscrire
+title Sequence Diagram - S'inscrire
+
+actor Visiteur
+participant Frontend
+participant AuthController
+participant AuthService
+participant UserRepository
+database Database
+
+Visiteur -> Frontend : submitRegistration(name, email, password)
+Frontend -> AuthController : POST /register
+AuthController -> AuthService : register(name, email, password)
+
+AuthService -> AuthService : validateRegistration(name, email, password)
+
+AuthService -> UserRepository : existsByEmail(email)
+UserRepository -> Database : findByEmail(email)
+Database --> UserRepository : User / null
+UserRepository --> AuthService : User / null
+
+alt Email disponible
+    AuthService -> AuthService : hashPassword(password)
+    AuthService -> UserRepository : createUser(name, email, password)
+    UserRepository -> Database : INSERT User
+    Database --> UserRepository : User créé
+    UserRepository --> AuthService : User
+    AuthService --> AuthController : Inscription réussie
+    AuthController --> Frontend : 201 Created
+    Frontend --> Visiteur : Compte créé avec succès
+
+else Email déjà utilisé
+    AuthService --> AuthController : Erreur : email déjà utilisé
+    AuthController --> Frontend : 409 Conflict
+    Frontend --> Visiteur : Cet email est déjà utilisé
+end
+
+@enduml

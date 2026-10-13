@@ -1,0 +1,101 @@
+@startuml CodeLearnWay_UseCase
+
+left to right direction
+
+skinparam shadowing false
+skinparam packageStyle rectangle
+skinparam actorStyle awesome
+
+skinparam usecase {
+    BackgroundColor White
+    BorderColor Black
+    ArrowColor Black
+}
+
+actor "Visiteur" as Visitor
+actor "Étudiant" as Student
+actor "Administrateur /\nFormateur" as Admin
+
+rectangle "CodeLearnWay" {
+
+    package "Authentification" {
+        usecase "S'inscrire" as UC_Register
+        usecase "Se connecter" as UC_Login
+        usecase "Se déconnecter" as UC_Logout
+    }
+
+    package "Parcours et leçons" {
+        usecase "Consulter les parcours" as UC_ViewPaths
+        usecase "Consulter une leçon" as UC_ViewLesson
+        usecase "Faire un exercice" as UC_DoExercise
+        usecase "Voir le résultat" as UC_ViewResult
+    }
+
+    package "Progression" {
+        usecase "Consulter sa progression" as UC_ViewProgress
+        usecase "Gagner de l'XP" as UC_GainXP
+        usecase "Monter de niveau" as UC_LevelUp
+    }
+
+    package "Profil" {
+        usecase "Consulter son profil" as UC_ViewProfile
+        usecase "Modifier son profil" as UC_EditProfile
+    }
+
+    package "Administration / Formation" {
+
+        package "Gestion des parcours" {
+            usecase "Créer un parcours" as UC_CreatePath
+            usecase "Modifier un parcours" as UC_EditPath
+            usecase "Supprimer un parcours" as UC_DeletePath
+        }
+
+        package "Gestion des leçons" {
+            usecase "Créer une leçon" as UC_CreateLesson
+            usecase "Modifier une leçon" as UC_EditLesson
+            usecase "Supprimer une leçon" as UC_DeleteLesson
+        }
+
+        package "Gestion des questions" {
+            usecase "Créer une question" as UC_CreateQuestion
+            usecase "Modifier une question" as UC_EditQuestion
+            usecase "Supprimer une question" as UC_DeleteQuestion
+        }
+    }
+}
+
+' Visiteur
+Visitor --> UC_Register
+Visitor --> UC_Login
+Visitor --> UC_ViewPaths
+
+' Étudiant
+Student --> UC_Login
+Student --> UC_Logout
+Student --> UC_ViewPaths
+Student --> UC_ViewLesson
+Student --> UC_DoExercise
+Student --> UC_ViewResult
+Student --> UC_ViewProgress
+Student --> UC_GainXP
+Student --> UC_LevelUp
+Student --> UC_ViewProfile
+Student --> UC_EditProfile
+
+' Administrateur / Formateur
+Admin --> UC_Login
+Admin --> UC_Logout
+
+Admin --> UC_CreatePath
+Admin --> UC_EditPath
+Admin --> UC_DeletePath
+
+Admin --> UC_CreateLesson
+Admin --> UC_EditLesson
+Admin --> UC_DeleteLesson
+
+Admin --> UC_CreateQuestion
+Admin --> UC_EditQuestion
+Admin --> UC_DeleteQuestion
+
+@enduml

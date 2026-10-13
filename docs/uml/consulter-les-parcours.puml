@@ -1,0 +1,27 @@
+@startuml CodeLearnWay_ConsulterLesParcours
+title Sequence Diagram - Consulter les parcours
+
+actor Visiteur
+actor Étudiant
+participant Frontend
+participant PathController
+participant PathService
+participant PathRepository
+database Database
+
+Visiteur -> Frontend : openPathsPage()
+Étudiant -> Frontend : openPathsPage()
+
+Frontend -> PathController : GET /paths
+PathController -> PathService : getAllPaths()
+PathService -> PathRepository : findAll()
+PathRepository -> Database : SELECT * FROM Path
+Database --> PathRepository : List<Path>
+PathRepository --> PathService : List<Path>
+PathService --> PathController : List<Path>
+PathController --> Frontend : 200 OK + List<Path>
+
+Frontend --> Visiteur : displayPaths(paths)
+Frontend --> Étudiant : displayPaths(paths)
+
+@enduml

@@ -1,0 +1,96 @@
+@startuml CodeLearnWay_ClassDiagram
+
+left to right direction
+
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+
+skinparam class {
+    BackgroundColor White
+    BorderColor Black
+    ArrowColor Black
+}
+
+' =========================================
+' CLASSES
+' =========================================
+
+class User {
+    - id : int
+    - firstName : String
+    - lastName : String
+    - username : String
+    - email : String
+    - password : String
+    - xp : int
+    - level : int
+    + register() : void
+    + login() : boolean
+    + logout() : void
+    + updateProfile() : void
+    + getProgress() : List<LessonProgress>
+}
+
+class Path {
+    - id : int
+    - title : String
+    - description : String
+    - difficulty : String
+    + getLessons() : List<Lesson>
+    + addLesson(lesson : Lesson) : void
+    + update() : void
+    + delete() : void
+}
+
+class Lesson {
+    - id : int
+    - title : String
+    - description : String
+    - content : String
+    - difficulty : String
+    - order : int
+    + getQuestions() : List<Question>
+    + update() : void
+    + delete() : void
+}
+
+class Question {
+    - id : int
+    - statement : String
+    - type : String
+    - points : int
+    + getAnswers() : List<Answer>
+    + checkAnswer(answerId : int) : boolean
+}
+
+class Answer {
+    - id : int
+    - content : String
+    - isCorrect : boolean
+}
+
+class LessonProgress {
+    - id : int
+    - completed : boolean
+    - xpEarned : int
+    - completedAt : DateTime
+    + markCompleted() : void
+    + calculateXP() : int
+}
+
+' =========================================
+' RELATIONSHIPS
+' =========================================
+
+User "1" -- "0..*" LessonProgress : has
+
+Lesson "1" -- "0..*" LessonProgress : relates to
+
+Path "1" *-- "1..*" Lesson : contains
+
+Lesson "1" *-- "1..*" Question : contains
+
+Question "1" *-- "2..*" Answer : has
+
+@enduml

@@ -1,0 +1,44 @@
+@startuml CodeLearnWay_ModifierSonProfil
+title Sequence Diagram - Modifier son profil
+
+actor Étudiant
+participant Frontend
+participant UserController
+participant UserService
+participant UserRepository
+database Database
+
+Étudiant -> Frontend : submitProfileUpdate(data)
+Frontend -> UserController : PUT /users/me
+UserController -> UserService : updateProfile(userId, data)
+
+UserService -> UserRepository : findById(userId)
+UserRepository -> Database : Find user
+Database --> UserRepository : User / null
+UserRepository --> UserService : User / null
+
+alt Utilisateur trouvé
+    UserService -> UserService : validateProfile(data)
+
+    alt Données valides
+        UserService -> UserRepository : update(userId, data)
+        UserRepository -> Database : UPDATE app_user
+        Database --> UserRepository : User mis à jour
+        UserRepository --> UserService : User mis à jour
+        UserService --> UserController : Profil mis à jour
+        UserController --> Frontend : 200 OK + User
+        Frontend --> Étudiant : displaySuccessMessage()
+
+    else Données invalides
+        UserService --> UserController : Erreur de validation
+        UserController --> Frontend : 400 Bad Request
+        Frontend --> Étudiant : displayValidationErrors()
+    end
+
+else Utilisateur non trouvé
+    UserService --> UserController : UserNotFound
+    UserController --> Frontend : 404 Not Found
+    Frontend --> Étudiant : displayErrorMessage()
+end
+
+@enduml

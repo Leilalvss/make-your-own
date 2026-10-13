@@ -1,0 +1,83 @@
+@startuml CodeLearnWay_GererUnParcours
+title Sequence Diagram - Gérer un parcours
+
+actor "Administrateur / Formateur" as Admin
+participant Frontend
+participant PathController
+participant PathService
+participant PathRepository
+database Database
+
+Admin -> Frontend : managePaths()
+Frontend -> PathController : GET /paths
+PathController -> PathService : getAllPaths()
+PathService -> PathRepository : findAll()
+PathRepository -> Database : SELECT * FROM Path
+Database --> PathRepository : List<Path>
+PathRepository --> PathService : List<Path>
+PathService --> PathController : List<Path>
+PathController --> Frontend : 200 OK + List<Path>
+Frontend --> Admin : displayPaths()
+
+alt Créer un parcours
+    Admin -> Frontend : submitPath(data)
+    Frontend -> PathController : POST /paths
+    PathController -> PathService : createPath(data)
+    PathService -> PathService : validatePath(data)
+    PathService -> PathRepository : create(data)
+    PathRepository -> Database : INSERT Path
+    Database --> PathRepository : Path créé
+    PathRepository --> PathService : Path
+    PathService --> PathController : Path créé
+    PathController --> Frontend : 201 Created
+    Frontend --> Admin : displaySuccessMessage()
+
+else Modifier un parcours
+    Admin -> Frontend : updatePath(pathId, data)
+    Frontend -> PathController : PUT /paths/{id}
+    PathController -> PathService : updatePath(pathId, data)
+    PathService -> PathRepository : findById(pathId)
+    PathRepository -> Database : Find path
+    Database --> PathRepository : Path / null
+    PathRepository --> PathService : Path / null
+
+    alt Parcours trouvé
+        PathService -> PathService : validatePath(data)
+        PathService -> PathRepository : update(pathId, data)
+        PathRepository -> Database : UPDATE Path
+        Database --> PathRepository : Path mis à jour
+        PathRepository --> PathService : Path
+        PathService --> PathController : Parcours modifié
+        PathController --> Frontend : 200 OK
+        Frontend --> Admin : displaySuccessMessage()
+    else Parcours non trouvé
+        PathService --> PathController : NotFound
+        PathController --> Frontend : 404 Not Found
+        Frontend --> Admin : displayErrorMessage()
+    end
+
+else Supprimer un parcours
+    Admin -> Frontend : deletePath(pathId)
+    Frontend -> PathController : DELETE /paths/{id}
+    PathController -> PathService : deletePath(pathId)
+    PathService -> PathRepository : findById(pathId)
+    PathRepository -> Database : Find path
+    Database --> PathRepository : Path / null
+    PathRepository --> PathService : Path / null
+
+    alt Parcours trouvé
+        PathService -> PathRepository : delete(pathId)
+        PathRepository -> Database : DELETE Path
+        Database --> PathRepository : Suppression confirmée
+        PathRepository --> PathService : Deleted
+        PathService --> PathController : Suppression réussie
+        PathController --> Frontend : 204 No Content
+        Frontend --> Admin : displaySuccessMessage()
+    else Parcours non trouvé
+        PathService --> PathController : NotFound
+        PathController --> Frontend : 404 Not Found
+        Frontend --> Admin : displayErrorMessage()
+    end
+end
+
+@enduml

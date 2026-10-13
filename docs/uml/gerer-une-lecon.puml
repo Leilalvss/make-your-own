@@ -1,0 +1,83 @@
+@startuml CodeLearnWay_GererUneLecon
+title Sequence Diagram - Gérer une leçon
+
+actor "Administrateur / Formateur" as Admin
+participant Frontend
+participant LessonController
+participant LessonService
+participant LessonRepository
+database Database
+
+Admin -> Frontend : manageLessons()
+Frontend -> LessonController : GET /lessons
+LessonController -> LessonService : getAllLessons()
+LessonService -> LessonRepository : findAll()
+LessonRepository -> Database : SELECT * FROM Lesson
+Database --> LessonRepository : List<Lesson>
+LessonRepository --> LessonService : List<Lesson>
+LessonService --> LessonController : List<Lesson>
+LessonController --> Frontend : 200 OK + List<Lesson>
+Frontend --> Admin : displayLessons()
+
+alt Créer une leçon
+    Admin -> Frontend : submitLesson(data)
+    Frontend -> LessonController : POST /lessons
+    LessonController -> LessonService : createLesson(data)
+    LessonService -> LessonService : validateLesson(data)
+    LessonService -> LessonRepository : create(data)
+    LessonRepository -> Database : INSERT Lesson
+    Database --> LessonRepository : Lesson créé
+    LessonRepository --> LessonService : Lesson
+    LessonService --> LessonController : Lesson créé
+    LessonController --> Frontend : 201 Created
+    Frontend --> Admin : displaySuccessMessage()
+
+else Modifier une leçon
+    Admin -> Frontend : updateLesson(lessonId, data)
+    Frontend -> LessonController : PUT /lessons/{id}
+    LessonController -> LessonService : updateLesson(lessonId, data)
+    LessonService -> LessonRepository : findById(lessonId)
+    LessonRepository -> Database : Find lesson
+    Database --> LessonRepository : Lesson / null
+    LessonRepository --> LessonService : Lesson / null
+
+    alt Leçon trouvée
+        LessonService -> LessonService : validateLesson(data)
+        LessonService -> LessonRepository : update(lessonId, data)
+        LessonRepository -> Database : UPDATE Lesson
+        Database --> LessonRepository : Lesson mis à jour
+        LessonRepository --> LessonService : Lesson
+        LessonService --> LessonController : Lesson mis à jour
+        LessonController --> Frontend : 200 OK
+        Frontend --> Admin : displaySuccessMessage()
+    else Leçon non trouvée
+        LessonService --> LessonController : NotFound
+        LessonController --> Frontend : 404 Not Found
+        Frontend --> Admin : displayErrorMessage()
+    end
+
+else Supprimer une leçon
+    Admin -> Frontend : deleteLesson(lessonId)
+    Frontend -> LessonController : DELETE /lessons/{id}
+    LessonController -> LessonService : deleteLesson(lessonId)
+    LessonService -> LessonRepository : findById(lessonId)
+    LessonRepository -> Database : Find lesson
+    Database --> LessonRepository : Lesson / null
+    LessonRepository --> LessonService : Lesson / null
+
+    alt Leçon trouvée
+        LessonService -> LessonRepository : delete(lessonId)
+        LessonRepository -> Database : DELETE Lesson
+        Database --> LessonRepository : Suppression confirmée
+        LessonRepository --> LessonService : Deleted
+        LessonService --> LessonController : Suppression réussie
+        LessonController --> Frontend : 204 No Content
+        Frontend --> Admin : displaySuccessMessage()
+    else Leçon non trouvée
+        LessonService --> LessonController : NotFound
+        LessonController --> Frontend : 404 Not Found
+        Frontend --> Admin : displayErrorMessage()
+    end
+end
+
+@enduml

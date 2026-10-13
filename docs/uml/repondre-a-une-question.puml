@@ -1,0 +1,32 @@
+@startuml CodeLearnWay_RepondreAUneQuestion
+title Sequence Diagram - Répondre à une question
+
+actor Étudiant
+participant Frontend
+participant QuestionController
+participant QuestionService
+participant QuestionRepository
+database Database
+
+Étudiant -> Frontend : selectAnswer(questionId, answerId)
+Frontend -> QuestionController : POST /questions/{id}/answer
+QuestionController -> QuestionService : checkAnswer(questionId, answerId)
+
+QuestionService -> QuestionRepository : findById(questionId)
+QuestionRepository -> Database : Find question and answers
+Database --> QuestionRepository : Question + Answers
+QuestionRepository --> QuestionService : Question + Answers
+
+QuestionService -> QuestionService : verifyAnswer(answerId)
+
+alt Réponse correcte
+    QuestionService --> QuestionController : Correct
+    QuestionController --> Frontend : 200 OK + Correct
+    Frontend --> Étudiant : displayCorrectFeedback()
+else Réponse incorrecte
+    QuestionService --> QuestionController : Incorrect
+    QuestionController --> Frontend : 200 OK + Incorrect
+    Frontend --> Étudiant : displayIncorrectFeedback()
+end
+
+@enduml
