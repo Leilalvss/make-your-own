@@ -20,7 +20,6 @@ class User {
     - id : int
     - firstName : String
     - lastName : String
-    - username : String
     - email : String
     - password : String
     - xp : int
