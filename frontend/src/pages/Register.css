@@ -1,31 +1,376 @@
 
+/* ==================================
+   CODELEARNWAY - PAGE INSCRIPTION
+================================== */
+
+/* Page principale */
 .register-page {
-  max-width: 450px;
-  margin: 60px auto;
-  padding: 30px;
+  width: 100%;
+  min-height: 100vh;
+  margin: 0;
+  padding: 35px 24px;
+  box-sizing: border-box;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #FFFFFF;
 }
 
-.register-page h1 {
-  text-align: center;
+/* Bloc central du formulaire */
+.register-content {
+  width: 100%;
+  max-width: 700px;
+  box-sizing: border-box;
 }
+
+/* ==================================
+   LOGO
+================================== */
+
+.register-page .register-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+.register-page .logo-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 52px;
+  height: 52px;
+  padding: 0;
+  border-radius: 12px;
+
+  background: #2563EB;
+  color: #FFFFFF;
+  font-size: 24px;
+  font-weight: 800;
+}
+
+.register-page .logo-text {
+  font-size: 33px;
+  font-weight: 800;
+  color: #2563EB;
+}
+
+.register-page .logo-learn {
+  color: #7C3AED;
+}
+
+.register-page .logo-way {
+  color: #059669;
+}
+
+/* ==================================
+   TITRE ET DESCRIPTION
+================================== */
+
+.register-page h1 {
+  margin: 0 0 10px;
+  color: #111827;
+  font-size: 39px;
+  font-weight: 800;
+  text-align: left;
+}
+
+.register-page .register-subtitle {
+  margin: 0 0 26px;
+  color: #667085;
+  font-size: 19px;
+  line-height: 1.5;
+  text-align: left;
+}
+
+/* ==================================
+   FORMULAIRE
+================================== */
 
 .register-page form {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 13px;
 }
 
-.register-page input {
-  padding: 12px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
+.register-page label {
+  color: #243047;
+  font-size: 18px;
+  font-weight: 600;
+  text-align: left;
 }
 
-.register-page button {
-  padding: 12px;
+/* Champs et icônes */
+.register-page .input-group {
+  display: flex;
+  align-items: center;
+
+  width: 100%;
+  height: 59px;
+
+  border: 1px solid #E5E7EB;
+  border-radius: 10px;
+  background: #FFFFFF;
+
+  box-sizing: border-box;
+  transition: border-color 0.2s;
+}
+
+.register-page .input-group:focus-within {
+  border-color: #7C3AED;
+}
+
+.register-page .field-icon {
+  flex-shrink: 0;
+  width: 23px;
+  height: 23px;
+  margin: 0 14px;
+  color: #667085;
+}
+
+/* Texte des champs */
+.register-page .input-group input {
+  flex: 1;
+  min-width: 0;
+  width: 100%;
+  height: 100%;
+
+  padding: 0 8px;
   border: none;
-  border-radius: 8px;
-  background-color: #6655cc;
-  color: white;
+  border-radius: 10px;
+  outline: none;
+
+  background: transparent;
+  color: #111827;
+  font-size: 17px;
+  box-sizing: border-box;
+}
+
+.register-page .input-group input::placeholder {
+  color: #98A2B3;
+}
+
+/* ==================================
+   YEUX DES MOTS DE PASSE
+================================== */
+
+.register-page .eye-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+  width: 48px;
+  height: 100%;
+
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 0 10px 10px 0;
+
+  background: transparent;
+  color: #667085;
   cursor: pointer;
 }
+
+.register-page .eye-button svg {
+  width: 23px;
+  height: 23px;
+}
+
+.register-page .eye-button:hover {
+  background: #F5F0FF;
+  color: #7C3AED;
+}
+
+/* ==================================
+   BOUTON INSCRIPTION
+================================== */
+
+.register-page .register-submit {
+  width: 100%;
+  height: 59px;
+  margin-top: 16px;
+  padding: 0;
+
+  border: none;
+  border-radius: 10px;
+
+  background: #7C3AED;
+  color: #FFFFFF;
+
+  font-size: 20px;
+  font-weight: 700;
+  cursor: pointer;
+
+  transition: background 0.2s;
+}
+
+.register-page .register-submit:hover {
+  background: #6D28D9;
+}
+
+/* Message d'erreur */
+.register-page .error-message {
+  color: #D32F2F;
+  font-size: 14px;
+  text-align: left;
+}
+
+/* ==================================
+   RESPONSIVE - MOBILE
+================================== */
+
+@media (max-width: 640px) {
+  .register-page {
+    align-items: flex-start;
+    padding: 30px 20px;
+  }
+
+  .register-content {
+    max-width: 100%;
+  }
+
+  .register-page .register-logo {
+    margin-bottom: 24px;
+  }
+
+  .register-page .logo-icon {
+    width: 42px;
+    height: 42px;
+    font-size: 20px;
+  }
+
+  .register-page .logo-text {
+    font-size: 25px;
+  }
+
+  .register-page h1 {
+    font-size: 31px;
+  }
+
+  .register-page .register-subtitle {
+    font-size: 16px;
+    margin-bottom: 24px;
+  }
+
+  .register-page form {
+    gap: 12px;
+  }
+
+  .register-page label {
+    font-size: 16px;
+  }
+
+  .register-page .input-group,
+  .register-page .register-submit {
+    height: 53px;
+  }
+
+  .register-page .input-group input {
+    font-size: 16px;
+  }
+
+  .register-page .register-submit {
+    font-size: 18px;
+  }
+}
+
+.register-page {
+  width: 100%;
+  min-height: 100vh;
+  margin: 0;
+  padding: 35px 24px;
+  box-sizing: border-box;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #F8FAFC;
+}
+
+.register-content {
+  width: 100%;
+  max-width: 700px;
+
+  padding: 35px 45px;
+  box-sizing: border-box;
+
+  background: #FFFFFF;
+  border: 1px solid #E5E7EB;
+  border-radius: 18px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+} 
+
+.register-page .register-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.register-page h1 {
+  margin: 0 0 10px;
+  color: #111827;
+  font-size: 39px;
+  font-weight: 800;
+  text-align: center;
+}
+
+.register-page .register-subtitle {
+  margin: 0 0 26px;
+  color: #667085;
+  font-size: 19px;
+  line-height: 1.5;
+  text-align: center;
+}
+
+@media (max-width: 640px) {
+  .register-page {
+    padding: 20px 12px;
+    align-items: center;
+  }
+
+  .register-content {
+    max-width: 100%;
+    padding: 25px 20px;
+  }
+
+  .register-page h1 {
+    font-size: 31px;
+  }
+
+  .register-page .register-subtitle {
+    font-size: 16px;
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
